@@ -28,6 +28,7 @@ const (
 
 type Info struct {
 	Label      string
+	Name       string
 	DeviceType DeviceType
 	Priority   Priority
 }
