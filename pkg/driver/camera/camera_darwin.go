@@ -1,6 +1,7 @@
 package camera
 
 import (
+	"fmt"
 	"image"
 
 	"github.com/pion/mediadevices/pkg/avfoundation"
@@ -32,8 +33,27 @@ func Initialize() {
 		driver.GetManager().Register(cam, driver.Info{
 			Label:      device.UID,
 			DeviceType: driver.Camera,
+			Name:       device.Name,
+			Connected:  device.Connected,
 		})
 	}
+}
+
+func Connected(oldLabel string) bool {
+	newDevices, err := avfoundation.Devices(avfoundation.Video)
+	fmt.Print("new:", newDevices)
+	if err != nil {
+		panic(err)
+	}
+
+	for i := 0; i < len(newDevices); i++ {
+		if newDevices[i].UID == oldLabel {
+			newDevices = nil
+			return true
+		}
+	}
+	newDevices = nil
+	return false
 }
 
 func newCamera(device avfoundation.Device) *camera {
@@ -52,7 +72,8 @@ func (cam *camera) Close() error {
 	if cam.rcClose != nil {
 		cam.rcClose()
 	}
-	return cam.session.Close()
+	val := cam.session.Close()
+	return val
 }
 
 func (cam *camera) VideoRecord(property prop.Media) (video.Reader, error) {

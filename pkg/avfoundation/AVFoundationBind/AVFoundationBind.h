@@ -23,6 +23,7 @@
 #pragma once
 
 #include <stddef.h>
+#include <stdbool.h>
 
 #define MAX_DEVICES                      8
 #define MAX_PROPERTIES                   64
@@ -65,6 +66,8 @@ typedef struct AVBindSession AVBindSession, *PAVBindSession;
 
 typedef struct {
     char uid[MAX_DEVICE_UID_CHARS + 1];
+    char name[MAX_DEVICE_UID_CHARS + 1];
+    bool connected;
 } AVBindDevice, *PAVBindDevice;
 
 // AVBindDevices returns a list of AVBindDevices. The result array is pointing to a static

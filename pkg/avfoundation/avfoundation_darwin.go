@@ -32,8 +32,10 @@ const (
 // underlying device given by AVFoundation
 type Device struct {
 	// UID is a unique identifier for a device
-	UID     string
-	cDevice C.AVBindDevice
+	Name      string
+	UID       string
+	Connected bool
+	cDevice   C.AVBindDevice
 }
 
 func frameFormatToAVBind(f frame.Format) (C.AVBindFrameFormat, bool) {
@@ -72,8 +74,8 @@ func frameFormatFromAVBind(f C.AVBindFrameFormat) (frame.Format, bool) {
 
 // Devices uses AVFoundation to query a list of devices based on the media type
 func Devices(mediaType MediaType) ([]Device, error) {
-	var cDevicesPtr C.PAVBindDevice
-	var cDevicesLen C.int
+	var cDevicesPtr C.PAVBindDevice = nil
+	var cDevicesLen C.int = 0
 
 	status := C.AVBindDevices(C.AVBindMediaType(mediaType), &cDevicesPtr, &cDevicesLen)
 	if status != nil {
@@ -87,6 +89,9 @@ func Devices(mediaType MediaType) ([]Device, error) {
 	for i := range devices {
 		devices[i].UID = C.GoString(&cDevices[i].uid[0])
 		devices[i].cDevice = cDevices[i]
+		devices[i].Name = C.GoString(&cDevices[i].name[0])
+		devices[i].Connected = bool(cDevicesPtr.connected)
+
 	}
 
 	return devices, nil

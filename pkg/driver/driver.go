@@ -30,6 +30,8 @@ type Info struct {
 	Label      string
 	DeviceType DeviceType
 	Priority   Priority
+	Name       string
+	Connected  bool
 }
 
 type Adapter interface {
